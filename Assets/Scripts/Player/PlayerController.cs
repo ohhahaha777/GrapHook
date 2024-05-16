@@ -1,28 +1,50 @@
+using System;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Player
 {
-    public class PlayerController : MonoBehaviour
+    public partial class PlayerController : MonoBehaviour
     {
-        public float moveSpeed = 3f;
-        void Update()
+        [Header("PlayerSettings")] 
+        public float playerHeight = 2f;
+
+        [Header("Quote")] 
+        public CameraHolder cameraHolder;
+
+        private Rigidbody _rigidBody;
+
+        private void Awake()
         {
-            if (Input.GetKey(KeyCode.W))
-            {
-                transform.Translate(Vector3.forward * (Time.deltaTime * moveSpeed));
-            }
-            if (Input.GetKey(KeyCode.A))
-            {
-                transform.Translate(Vector3.left * (Time.deltaTime * moveSpeed));
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                transform.Translate(Vector3.back * (Time.deltaTime * moveSpeed));
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                transform.Translate(Vector3.right * (Time.deltaTime * moveSpeed));
-            }
+            _rigidBody = GetComponent<Rigidbody>();
+        }
+
+        private void Start()
+        {
+            _isReadyToJump = true;
+            _isGrappling = true;
+        }
+
+        private void Update()
+        {
+            //Ground Check
+            UpdateGroundCheck();
+            _rigidBody.drag = _isOnGround ? groundDrag : 0;
+            
+            //Input
+            UpdateMovementInput();
+            
+            //Grapple
+            if (_grapplingCdTimer > 0) _grapplingCdTimer -= Time.deltaTime;
+        }
+
+        private void FixedUpdate()
+        {
+            Move();
+            
+            if(_isGrappling)
+                lineRenderer.SetPosition(0, lineStart.position);
         }
     }
 }
