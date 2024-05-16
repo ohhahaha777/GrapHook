@@ -6,7 +6,7 @@ namespace Player
     {
         [Header("Input")] 
         public KeyCode jumpKey = KeyCode.Space;
-        public KeyCode grappleKey = KeyCode.Mouse1;
+        public KeyCode grappleKey = KeyCode.G;
 
         private void UpdateMovementInput()
         {
@@ -20,6 +20,12 @@ namespace Player
             {
                 Jump();
                 Invoke(nameof(ResetJump), jumpCd);
+            }
+            
+            //Grapple
+            if (Input.GetKeyDown(grappleKey))
+            {
+                StartGrappling();
             }
         }
     }
